@@ -27,6 +27,7 @@ import java.util.LinkedHashMap;
 import java.nio.charset.Charset;
 
 class WebServer {
+  String story = "";
   public static void main(String args[]) {
     WebServer server = new WebServer(9000);
   }
@@ -144,7 +145,8 @@ class WebServer {
           builder.append("\n");
           builder.append(page);
 
-        } else if (request.equalsIgnoreCase("json")) {
+        }
+        else if (request.equalsIgnoreCase("json")) {
           // shows the JSON of a random image and sets the header name for that image
 
           // pick a index from the map
@@ -163,7 +165,8 @@ class WebServer {
           builder.append("\"image\":\"").append(url).append("\"");
           builder.append("}");
 
-        } else if (request.equalsIgnoreCase("random")) {
+        }
+        else if (request.equalsIgnoreCase("random")) {
           // opens the random image page
 
           // open the index.html
@@ -175,7 +178,8 @@ class WebServer {
           builder.append("\n");
           builder.append(new String(readFileInBytes(file)));
 
-        } else if (request.contains("file/")) {
+        }
+        else if (request.contains("file/")) {
           // tries to find the specified file and shows it or shows an error
 
           // take the path and clean it. try to open the file
@@ -193,7 +197,8 @@ class WebServer {
             builder.append("\n");
             builder.append("File not found: " + file);
           }
-        } else if (request.contains("multiply?")) {
+        }
+        else if (request.contains("multiply?")) {
           // This multiplies two numbers, there is NO error handling, so when
           // wrong data is given this just crashes
 
@@ -217,7 +222,30 @@ class WebServer {
           // TODO: Include error handling here with a correct error code and
           // a response that makes sense
 
-        } else if (request.contains("github?")) {
+        }
+        else if (request.contains("story")) {
+          // Generate response
+          builder.append("HTTP/1.1 200 OK\n");
+          builder.append("Content-Type: text/html; charset=utf-8\n");
+          builder.append("\n");
+          builder.append("<h1> Here is the story: </h1> <br><br>" + story);
+
+          // TODO: Include error handling here with a correct error code and
+          // a response that makes sense
+
+        }
+        else if (request.contains("addline?")){
+          Map<String, String> query_pairs = new LinkedHashMap<String, String>();
+          // extract path parameters
+          query_pairs = splitQuery(request.replace("addline?", ""));
+          story += query_pairs.get("text") + "\n" + "<br>";
+
+          builder.append("HTTP/1.1 200 OK\n");
+          builder.append("Content-Type: text/html; charset=utf-8\n");
+          builder.append("\n");
+          builder.append("<h1> Here is the story: </h1> <br><br>" + story);
+        }
+        else if (request.contains("github?")) {
           // pulls the query from the request and runs it with GitHub's REST API
           // check out https://docs.github.com/rest/reference/
           //
@@ -238,7 +266,8 @@ class WebServer {
           // TODO: Parse the JSON returned by your fetch and create an appropriate
           // response based on what the assignment document asks for
 
-        } else {
+        }
+        else {
           // if the request is not recognized at all
 
           builder.append("HTTP/1.1 400 Bad Request\n");
