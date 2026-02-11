@@ -234,6 +234,19 @@ class WebServer {
           // a response that makes sense
 
         }
+        else if (request.contains("page?")){
+          Map<String, String> query_pairs = new LinkedHashMap<String, String>();
+          // extract path parameters
+          query_pairs = splitQuery(request.replace("page?", ""));
+          // extract required fields from parameters
+          String webAddress = query_pairs.get("addr");
+          String result = "<iframe height=100% width=100% src=\"" +webAddress + "\"></iframe>";
+          builder.append("HTTP/1.1 200 OK\n");
+          builder.append("Content-Type: text/html; charset=utf-8\n");
+          builder.append("\n");
+          builder.append(result);
+
+        }
         else if (request.contains("addline?")){
           Map<String, String> query_pairs = new LinkedHashMap<String, String>();
           // extract path parameters
